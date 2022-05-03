@@ -1,0 +1,29 @@
+
+(var password (prompt "Enter your password"))
+(= password "password")
+ (prompt "whatever: ")
+(symbols)
+about
+(about)
+(print "\033[0m")
+(print "\x1B[0m")
+(print \x1B"[0m")
+(print "^[0m")
+(symbols)
+(char-code 1)
+(char-code)
+(char-code a)
+(char-code "a")
+import
+(import)
+help
+(help)
+import
+(import aaa)
+(import "a")
+(symbols)
+(if true (print "hey") (print "ay"))
+(join symbols " ")
+(join (symbols) " ")
+symbols
+(symbols)

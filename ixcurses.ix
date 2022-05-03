@@ -1,0 +1,164 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                                                                         ;
+;                                IXCurses                                 ;
+;                                                                         ;                                                                         #
+;  Copyright (c) 2022, Zackery .R. Smith <zackery.smith82307@gmail.com>.  ;
+;                                                                         ;
+;  This program is free software: you can redistribute it and/or modify   ;
+;  it under the terms of the GNU General Public License as published by   ;
+;  the Free Software Foundation, either version 3 of the License, or      ;
+;  (at your option) any later version.                                    ;
+;                                                                         ;
+;  This program is distributed in the hope that it will be useful,        ;
+;  but WITHOUT ANY WARRANTY; without even the implied warranty of         ;
+;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          ;
+;  GNU General Public License for more details.                           ;
+;                                                                         ;
+;  You should have received a copy of the GNU General Public License      ;
+;  along with this program. If not, see <http://www.gnu.org/licenses/>.   ;
+;                                                                         ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(var TC_ESC (char-code 27))
+
+;; Universal color normalizer
+(var TC_NRM (str TC_ESC"[0m"))
+
+;; 16 bit colors
+(var TC_FG_RED (str TC_ESC"[1;31m")) ; Red     (fg)
+(var TC_FG_GRN (str TC_ESC"[1;32m")) ; Green   (fg)
+(var TC_FG_YEL (str TC_ESC"[1;33m")) ; Yellow  (fg)
+(var TC_FG_BLU (str TC_ESC"[1;34m")) ; Blue    (fg)
+(var TC_FG_MAG (str TC_ESC"[1;35m")) ; Magenta (fg)
+(var TC_FG_CYN (str TC_ESC"[1;36m")) ; Cyan    (fg)
+(var TC_FG_WHT (str TC_ESC"[1;37m")) ; White   (fg)
+(var TC_FG_BLK (str TC_ESC"[1;30m")) ; Black   (fg)
+(var TC_FG_RET (str TC_ESC"[1;39m")) ; Default (fg)  P.S : RET = Return
+
+(var TC_BG_RED (str TC_ESC"[1;41m")) ; Red     (bg)
+(var TC_BG_GRN (str TC_ESC"[1;42m")) ; Green   (bg)
+(var TC_BG_YEL (str TC_ESC"[1;43m")) ; Yellow  (bg)
+(var TC_BG_BLU (str TC_ESC"[1;44m")) ; Blue    (bg)
+(var TC_BG_MAG (str TC_ESC"[1;45m")) ; Magenta (bg)
+(var TC_BG_CYN (str TC_ESC"[1;46m")) ; Cyan    (bg)
+(var TC_BG_WHT (str TC_ESC"[1;47m")) ; White   (bg)
+(var TC_BG_BLK (str TC_ESC"[1;40m")) ; Black   (bg)
+(var TC_BG_RET (str TC_ESC"[1;49m")) ; Default (bg)  P.S : RET = Return
+
+;; Aixterm specification for ISO colors (supported by a majority of terminals)
+(var TC_FG_BRED (str TC_ESC"[1;91m"))  ; Bright red     (fg)
+(var TC_FG_BGRN (str TC_ESC"[1;92m"))  ; Bright green   (fg)
+(var TC_FG_BYEL (str TC_ESC"[1;93m"))  ; Bright yellow  (fg)
+(var TC_FG_BBLU (str TC_ESC"[1;94m"))  ; Bright blue    (fg)
+(var TC_FG_BMAG (str TC_ESC"[1;95m"))  ; Bright magenta (fg)
+(var TC_FG_BCYN (str TC_ESC"[1;96m"))  ; Bright cyan    (fg)
+(var TC_FG_BWHT (str TC_ESC"[1;97m"))  ; Bright white   (fg)
+(var TC_FG_BBLK (str TC_ESC"[1;90m"))  ; Bright black   (fg)
+
+(var TC_BG_BRED (str TC_ESC"[1;101m")) ; Bright red     (bg)
+(var TC_BG_BGRN (str TC_ESC"[1;102m")) ; Bright green   (bg)
+(var TC_BG_BYEL (str TC_ESC"[1;103m")) ; Bright yellow  (bg)
+(var TC_BG_BBLU (str TC_ESC"[1;104m")) ; Bright blue    (bg)
+(var TC_BG_BMAG (str TC_ESC"[1;105m")) ; Bright magenta (bg)
+(var TC_BG_BCYN (str TC_ESC"[1;106m")) ; Bright cyan    (bg)
+(var TC_BG_BWHT (str TC_ESC"[1;107m")) ; Bright white   (bg)
+(var TC_BG_BBLK (str TC_ESC"[1;100m")) ; Bright black   (bg)
+
+;; RGB (Truecolor; 24-bit RGB)
+(function TC_RGB layer r g b
+	(if (= layer 1)
+		(return (str TC_ESC "[38;2;" r ";" g ";" b ";" "m"))
+		(return (str TC_ESC "[48;2;" r ";" g ";" b ";" "m"))))
+
+;; 256 colors
+(function TC_COLOR_ID layer id 
+	(if (= layer 1)
+		(return (str TC_ESC "[38;5;" id "m")) 
+		(return (str TC_ESC "[48;5;" id "m"))))
+
+;; Styles
+(var TC_BOLD     (str TC_ESC"[1m"))  ; Bold
+(var TC_DIM      (str TC_ESC"[2m"))  ; Dim
+(var TC_ITAL     (str TC_ESC"[3m"))  ; Italic
+(var TC_UNDR     (str TC_ESC"[4m"))  ; Underline
+(var TC_BLNK     (str TC_ESC"[5m"))  ; Blinking
+(var TC_REV      (str TC_ESC"[7m"))  ; Reverse
+(var TC_INV      (str TC_ESC"[8m"))  ; Invisible
+(var TC_STRK     (str TC_ESC"[9m"))  ; Strikethrough
+
+; Reset styles individually
+; Keep in mind that TC_NRM will still reset all styles
+(var TC_NRM_BLD  (str TC_ESC"[22m")) ; Normalize bold
+(var TC_NRM_DIM  (str TC_ESC"[22m")) ; Normalize dim
+(var TC_NRM_ITAL (str TC_ESC"[23m")) ; Normalize italic
+(var TC_NRM_UNDR (str TC_ESC"[24m")) ; Normalize underline
+(var TC_NRM_BLNK (str TC_ESC"[25m")) ; Normalize blinking
+(var TC_NRM_REV  (str TC_ESC"[27m")) ; Normalize reverse
+(var TC_NRM_INV  (str TC_ESC"[28m")) ; Normalize invisible
+(var TC_NRM_STRK (str TC_ESC"[29m")) ; Normalize strikethrough
+;N; ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;N; : Both dim and bold modes are reset with the ESC[22m :
+;N; : sequence. The ESC[21m sequence is a non-specified  :
+;N; : sequence for double underline mode and only work   :
+;N; : in some terminals and is reset with ESC[24m        :
+;N; ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+;!; :::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+;!; : Some terminals may not support some of the graphic :
+;!; : mode sequences above.                              :
+;!; ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+;; Screen mode control
+(function TC_SET_SCREEN_MODE c
+	(print-str (str TC_ESC"[="c"h")))
+
+(function TC_RESET_SCREEN_MODE c
+	(print-str (str TC_ESC"[="c"l")))
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;
+; 0 = 40 x 25 monochrome (text)                                                 ;
+; 1 = 40 x 25 color (text)                                                      ;
+; 2 = 80 x 25 monochrome (text)                                                 ;
+; 3 = 80 x 25 color (text)                                                      ;
+; 4 = 320 x 200 4-color (graphics)                                              ;
+; 5 = 320 x 200 monochrome (graphics)                                           ;
+; 6 = 640 x 200 monochrome (graphics)                                           ;
+; 7 = Enables line wrapping, oposite will occur if TC_RESET_SCREEN_MODE is used ;
+; 13 = 320 x 200 color (graphics)                                               ;
+; 14 = 640 x 200 color (16-color graphics)                                      ;
+; 15 = 640 x 350 monochrome (2-color graphics)                                  ;
+; 16 = 640 x 350 color (16-color graphics)                                      ;
+; 17 = 640 x 480 monochrome (2-color graphics)                                  ;
+; 18 = 640 x 480 color (16-color graphics)                                      ;
+; 19 = 320 x 200 color (256-color graphics)                                     ;
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::;
+
+
+;; Common private modes
+(function TC_VISABLE_CURSOR bool
+	(if (= bool true)
+		(print-str (str TC_ESC"[?25h"))
+		(print-str (str TC_ESC"[?25l"))))
+
+(function TC_SAVE_SCREEN      (print-str (str TC_ESC"[?47h")))
+(function TC_RESTORE_SCREEN   (print-str (str TC_ESC"[?47l")))
+
+(function TC_ENTER_ALT_BUFFER (print-str (str TC_ESC"[?1049h")))
+(function TC_EXIT_ALT_BUFFER  (print-str (str TC_ESC"[?1049l")))
+
+
+;; Erase functions
+(function TC_CLEAR_FROM_CURSOR_TO_BOTTOM (print-str (str TC_ESC"[0J")))
+(function TC_CLEAR_FROM_TOP_TO_CURSOR    (print-str (str TC_ESC"[1J")))
+(function TC_CLEAR_SCREEN                (print-str (str TC_ESC"[2J")))
+(function TC_CLEAR_LINE_FROM_CURSOR      (print-str (str TC_ESC"[0K")))
+(function TC_CLEAR_LINE_TILL_CURSOR      (print-str (str TC_ESC"[1K")))
+(function TC_CLEAR_LINE                  (print-str (str TC_ESC"[2K")))
+
+
+;; Cursor functions
+(function TC_HOME_CURSOR            (print-str TC_ESC"[H"))
+(function TC_SET_CURSOR col row     (print-str TC_ESC"["row";"col"H"))
+(function TC_SET_CURSOR_ALT col row (print-str TC_ESC"["row";"col"f"))
+(function TC_MOVE_CURSOR cols rows  (
+))

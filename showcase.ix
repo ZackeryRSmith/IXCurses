@@ -1,0 +1,111 @@
+(import "ixcurses.ix")
+
+(print TC_NRM"
+			       "TC_BG_MAG"▄█  "TC_BG_BLK"▀████    ▐████▀  "TC_NRM"▄████████ ███    █▄     ▄████████    ▄████████    ▄████████    ▄████████ 
+			       "TC_BG_MAG"███ "TC_BG_BLK"   ███▌   ████▀  "TC_NRM"███    ███ ███    ███   ███    ███   ███    ███   ███    ███   ███    ███ 
+			       "TC_BG_MAG"███▌"TC_BG_BLK"    ███  ▐███    "TC_NRM"███    █▀  ███    ███   ███    ███   ███    █▀    ███    █▀    ███    █▀  
+			       "TC_BG_MAG"███▌"TC_BG_BLK"    ▀███▄███▀    "TC_NRM"███        ███    ███  ▄███▄▄▄▄██▀   ███         ▄███▄▄▄       ███        
+			       "TC_BG_MAG"███▌"TC_BG_BLK"    ████▀██▄     "TC_NRM"███        ███    ███ ▀▀███▀▀▀▀▀   ▀███████████ ▀▀███▀▀▀     ▀███████████
+			       "TC_BG_MAG"███ "TC_BG_BLK"   ▐███  ▀███    "TC_NRM"███    █▄  ███    ███ ▀███████████          ███   ███    █▄           ███ 
+			       "TC_BG_MAG"███ "TC_BG_BLK"  ▄███     ███▄  "TC_NRM"███    ███ ███    ███   ███    ███    ▄█    ███   ███    ███    ▄█    ███ 
+			       "TC_BG_MAG"█▀  "TC_BG_BLK" ████       ███▄ "TC_NRM"████████▀  ████████▀    ███    ███  ▄████████▀    ██████████  ▄████████▀ 
+			                                                    ███    ███       ")
+(print TC_NRM"\t\t\t\t\t\t\t\tA project by: "TC_BOLD,TC_UNDR"ZackeryRSmith")
+(print TC_NRM"\t\t\t\t\t\t\t   Thanks to "TC_BOLD"Patrick"TC_NRM", developer of "TC_BG_MAG"I"TC_NRM,TC_DIM"nsitu"TC_NRM,TC_BG_BLK"x"TC_NRM)
+
+;# colors 16-231 are a 6x6x6 color cube
+;for ($red = 0; $red < 6; $red++) {
+;    for ($green = 0; $green < 6; $green++) {
+;	for ($blue = 0; $blue < 6; $blue++) {
+;	    printf("\x1b]4;%d;rgb:%2.2x/%2.2x/%2.2x\x1b\\",
+;		   16 + ($red * 36) + ($green * 6) + $blue,
+;		   ($red ? ($red * 40 + 55) : 0),
+;		   ($green ? ($green * 40 + 55) : 0),
+;		   ($blue ? ($blue * 40 + 55) : 0));
+;	}
+;    }
+;}
+
+;# colors 232-255 are a grayscale ramp, intentionally leaving out
+;# black and white
+;for ($gray = 0; $gray < 24; $gray++) {
+;    $level = ($gray * 10) + 8;
+;    printf("\x1b]4;%d;rgb:%2.2x/%2.2x/%2.2x\x1b\\",
+;	   232 + $gray, $level, $level, $level);
+;}
+
+
+;; colors 16-231 are a 6x6x6 color cube
+
+;for ($red = 0; $red < 6; $red++) {
+;    for ($green = 0; $green < 6; $green++) {
+;	for ($blue = 0; $blue < 6; $blue++) {
+;	    printf("\x1b]4;%d;rgb:%2.2x/%2.2x/%2.2x\x1b\\",
+;		   16 + ($red * 36) + ($green * 6) + $blue,
+;		   ($red ? ($red * 40 + 55) : 0),
+;		   ($green ? ($green * 40 + 55) : 0),
+;		   ($blue ? ($blue * 40 + 55) : 0));
+;	}
+;    }
+;}
+
+(let r 0 g 0 b 0)
+(while (< r 6)
+	(while (< g 6)
+		(while (< b 6)
+			(print TC_ESC"]4;"
+				(+ 16 (* r 36)(* g 6)b)";rgb:"
+				(if r (+ (* r 40) 55) 0)"/"
+				(if g (+ (* r 40) 55) 0)"/"
+				(if b (+ (* r 40) 55) 0))
+				TC_ESC"\\"
+			(let! b inc))
+		(let! g inc))
+	(let! r inc))
+
+;; System colors
+(print TC_NRM"System colors:")
+(let color 0)
+(while (< color 8)
+	(print-str (TC_COLOR_ID 0 color)"   ")
+	(let! color inc))
+(print TC_NRM)
+(while (< color 16)
+	(print-str (TC_COLOR_ID 0 color)"   ")
+	(let! color inc))
+(print TC_NRM"\n")
+
+;; Color cube
+;for y in range(0, 5):
+;            for x in range(options.max_width):
+;                h = x / options.max_width
+;                l = 0.1 + ((y / 5) * 0.7)
+;                r1, g1, b1 = colorsys.hls_to_rgb(h, l, 1.0)
+;                r2, g2, b2 = colorsys.hls_to_rgb(h, l + 0.7 / 10, 1.0)
+;                bgcolor = Color.from_rgb(r1 * 255, g1 * 255, b1 * 255)
+;                color = Color.from_rgb(r2 * 255, g2 * 255, b2 * 255)
+;                yield Segment("▄", Style(color=color, bgcolor=bgcolor))
+;            yield Segment.line()
+
+
+(print TC_NRM"Color cube, 6x6x6:")
+(let color 16 r 0 g 0 b 0)
+(loop 6 true
+	(while (< g 6)
+		(while (< r 6)
+			(while (< b 6)
+				(let color (+ 16(* r 36)(* g 6)b))
+				(print-str (TC_COLOR_ID 0 color)"   ")
+				(let! b inc))
+			(print-str TC_NRM)
+			(let! r inc))
+		(print)
+		(let! g inc)))
+
+;; Grayscale ramp
+(print TC_NRM"Grayscale ramp:")
+(let color 232)
+(while (< color 256) 
+	(print-str (TC_COLOR_ID 0 color)"   ")
+	(let! color inc))
+(print TC_NRM)
