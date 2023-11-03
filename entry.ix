@@ -67,14 +67,14 @@
 ;; RGB (Truecolor; 24-bit RGB)
 (function TC_RGB layer r g b
 	(if (= layer 1)
-		(return (str TC_ESC "[38;2;" r ";" g ";" b ";" "m"))
-		(return (str TC_ESC "[48;2;" r ";" g ";" b ";" "m"))))
+		(str TC_ESC "[38;2;" r ";" g ";" b ";" "m")
+		(str TC_ESC "[48;2;" r ";" g ";" b ";" "m")))
 
 ;; 256 colors
 (function TC_COLOR_ID layer id 
 	(if (= layer 1)
-		(return (str TC_ESC "[38;5;" id "m")) 
-		(return (str TC_ESC "[48;5;" id "m"))))
+		(str TC_ESC "[38;5;" id "m")
+		(str TC_ESC "[48;5;" id "m")))
 
 ;; Styles
 (var TC_BOLD     (str TC_ESC"[1m"))  ; Bold
@@ -160,5 +160,5 @@
 (function TC_HOME_CURSOR            (print-str TC_ESC"[H"))
 (function TC_SET_CURSOR col row     (print-str TC_ESC"["row";"col"H"))
 (function TC_SET_CURSOR_ALT col row (print-str TC_ESC"["row";"col"f"))
-(function TC_MOVE_CURSOR cols rows  (
-))
+; (function TC_MOVE_CURSOR cols rows  (
+; ))
